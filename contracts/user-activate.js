@@ -50,29 +50,51 @@ async function main() {
   const walletBal = await provider.getBalance(signer.address);
   console.log(`Số dư ví của bạn:    ${ethers.formatEther(walletBal)} RITUAL`);
 
-  // 2. Nạp thêm phí TEE
-  const depositAmount = ethers.parseEther('1.0'); // Nạp 1.0 RITUAL để đảm bảo đủ phí chạy TEE
-  if (walletBal < depositAmount) {
-    console.error(`\n❌ LỖI: Số dư ví không đủ 1.0 RITUAL để thực hiện nạp phí. Hãy faucet thêm RITUAL.`);
-    process.exit(1);
-  }
+  // 2. Kiểm tra số dư Escrow hiện tại và nạp thêm nếu cần
+  let escrowBal = await contract.walletBalance();
+  console.log(`Số dư ví Escrow hiện tại: ${ethers.formatEther(escrowBal)} RITUAL`);
 
   const feeData = await provider.getFeeData();
-  console.log(`\n1️⃣  Đang nạp 1.0 RITUAL vào ví Escrow...`);
-  const depTx = await contract.depositForFees({
-    value: depositAmount,
-    maxFeePerGas: feeData.maxFeePerGas,
-    maxPriorityFeePerGas: feeData.maxPriorityFeePerGas
-  });
-  console.log(`   TX Hash: ${depTx.hash}`);
-  await depTx.wait();
-  console.log("   ✅ Nạp tiền thành công!");
+  const MIN_ESCROW_BAL = ethers.parseEther('0.5'); // Cần tối thiểu 0.5 RITUAL trong escrow
 
-  const escrowBal = await contract.walletBalance();
-  console.log(`   Số dư ví Escrow hiện tại: ${ethers.formatEther(escrowBal)} RITUAL`);
+  if (escrowBal < MIN_ESCROW_BAL) {
+    const depositAmount = ethers.parseEther('0.5'); // Nạp thêm 0.5 RITUAL
+    console.log(`\n1️⃣  Số dư Escrow thấp (${ethers.formatEther(escrowBal)} RITUAL). Đang nạp thêm 0.5 RITUAL...`);
+    if (walletBal < depositAmount) {
+      console.error(`❌ LỖI: Số dư ví không đủ 0.5 RITUAL để thực hiện nạp phí. Hãy faucet thêm RITUAL.`);
+      process.exit(1);
+    }
+    
+    const depTx = await contract.depositForFees({
+      value: depositAmount,
+      maxFeePerGas: feeData.maxFeePerGas,
+      maxPriorityFeePerGas: feeData.maxPriorityFeePerGas
+    });
+    console.log(`   TX Hash: ${depTx.hash}`);
+    await depTx.wait();
+    console.log("   ✅ Nạp tiền thành công!");
+    escrowBal = await contract.walletBalance();
+    console.log(`   Số dư ví Escrow mới: ${ethers.formatEther(escrowBal)} RITUAL`);
+  } else {
+    console.log(`\n1️⃣  Số dư Escrow hiện tại (${ethers.formatEther(escrowBal)} RITUAL) đã đủ dùng. Bỏ qua bước nạp tiền.`);
+  }
 
-  // 3. Khởi động Agent với Schedule mới
-  console.log(`\n2️⃣  Đang gửi lệnh kích hoạt chu kỳ mới (startAgent)...`);
+  // 3. Hủy bỏ Schedule cũ nếu có
+  const activeSchedId = await contract.activeScheduleId();
+  if (activeSchedId.toString() !== '0') {
+    console.log(`\n2️⃣  Phát hiện Schedule ID cũ #${activeSchedId.toString()} đang hoạt động. Đang hủy...`);
+    const stopTx = await contract.stopAgent({
+      maxFeePerGas: feeData.maxFeePerGas,
+      maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
+      gasLimit: 300_000
+    });
+    console.log(`   TX Hash: ${stopTx.hash}`);
+    await stopTx.wait();
+    console.log("   ✅ Đã hủy chu kỳ cũ thành công!");
+  }
+
+  // 4. Khởi động Agent với Schedule mới
+  console.log(`\n3️⃣  Đang gửi lệnh kích hoạt chu kỳ mới (startAgent)...`);
   const frequency = 500;
   const numCalls = 5;
   const gasLimit = 900_000;
