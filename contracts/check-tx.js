@@ -3,9 +3,12 @@ const { ethers } = require('ethers');
 async function checkTx() {
   const provider = new ethers.JsonRpcProvider('https://rpc.ritualfoundation.org', { chainId: 1979, name: 'ritual' });
   
-  const TX_HASH = '0x288dca6d5a3ce5361a66e3ae32b4c8521bbe5236627518cb4a1e6e655e164f4b';
-  const CONTRACT = '0x6032697f3445F8157f3CFdF86d224d67341Ee43f';
-  const OWNER    = '0xe63a4d9bB091659a47972980E91a087aF4430466';
+  const fs = require('fs');
+  const path = require('path');
+  const deployment = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'build/deployment.json'), 'utf8'));
+  const TX_HASH = deployment.startAgentTx;
+  const CONTRACT = deployment.contractAddress;
+  const OWNER    = '0x75E698390F225568510DB5b56B34EA4C94AA3b9d';
 
   console.log("╔══════════════════════════════════════════════════════╗");
   console.log("║         KIỂM TRA GIAO DỊCH (TRANSACTION)            ║");

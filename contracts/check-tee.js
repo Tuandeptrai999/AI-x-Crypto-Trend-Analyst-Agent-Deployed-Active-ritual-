@@ -49,7 +49,7 @@ async function main() {
   }
 
   console.log("\n=== TỔNG KẾT ĐẦY ĐỦ ===");
-  console.log("Ví Deploy (Owner) :", "0xe63a4d9bB091659a47972980E91a087aF4430466");
+  console.log("Ví Deploy (Owner) :", "0x75E698390F225568510DB5b56B34EA4C94AA3b9d");
   console.log("Contract Agent     :", deployment.contractAddress);
   console.log("TEE Executor       :", deployment.executor);
   console.log("Schedule ID        :", "#" + deployment.scheduleId);

@@ -5,7 +5,8 @@ const path = require('path');
 
 const RPC_URL     = process.env.RITUAL_RPC_URL || 'https://rpc.ritualfoundation.org';
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const CONTRACT_ADDRESS = '0x6032697f3445F8157f3CFdF86d224d67341Ee43f';
+const deployment = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'build/deployment.json'), 'utf8'));
+const CONTRACT_ADDRESS = deployment.contractAddress;
 
 const { abi } = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, 'build/HomoMimic.json'), 'utf8')

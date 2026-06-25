@@ -4,7 +4,7 @@ async function main() {
   const provider = new ethers.JsonRpcProvider('https://rpc.ritualfoundation.org', { chainId: 1979, name: 'ritual' });
 
   const FROM   = '0xe63a4d9bB091659a47972980E91a087aF4430466';
-  const TO     = '0x6032697f3445F8157f3CFdF86d224d67341Ee43f';
+  const TO     = '0x02C96B18762BfA21AaB572D01cFD692608e93271';
 
   // All known TX hashes from the deploy session logs
   const candidates = [

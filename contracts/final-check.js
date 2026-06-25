@@ -4,11 +4,13 @@ const fs = require('fs');
 async function main() {
   const provider = new ethers.JsonRpcProvider('https://rpc.ritualfoundation.org', { chainId: 1979, name: 'ritual' });
 
-  const CONTRACT = '0x6032697f3445F8157f3CFdF86d224d67341Ee43f';
-  const OWNER    = '0xe63a4d9bB091659a47972980E91a087aF4430466';
-  const TEE      = '0x9dc11412391Dc3EDF59811FC9Ee7bEbFD41c8b4C';
-  const SCHEDULE = '2729512';
-  const START_TX = '0xf660d90d6f3228f9aa225a3c13bdea006e8100885dcd71bd0a5e0e980dd631c2';
+  const path = require('path');
+  const deployment = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'build/deployment.json'), 'utf8'));
+  const CONTRACT = deployment.contractAddress;
+  const OWNER    = '0x75E698390F225568510DB5b56B34EA4C94AA3b9d';
+  const TEE      = deployment.executor;
+  const SCHEDULE = deployment.scheduleId;
+  const START_TX = deployment.startAgentTx;
 
   const abi = [
     "function owner() view returns (address)",
@@ -61,12 +63,12 @@ async function main() {
     ['[CHAIN] Ví chủ còn số dư RITUAL',                      parseFloat(ethers.formatEther(ownerBal)) > 0],
     ['[CHAIN] Ritual Wallet có phí gas >= 0.04 RITUAL',      parseFloat(ethers.formatEther(walletBal)) >= 0.04],
     ['[CHAIN] Payload encodedRequest đã lưu on-chain',       encodedReq.length > 2],
-    ['[CHAIN] Scheduler đang active (ID = 2729512)',          schedId.toString() === SCHEDULE],
+    ['[CHAIN] Scheduler đang active (ID = ' + SCHEDULE + ')',          schedId.toString() === SCHEDULE],
     // GITHUB / LOCAL
-    ['[GIT]   README chứa contract mới 0x46Fc8ad...',        readme.includes(CONTRACT)],
+    ['[GIT]   README chứa contract mới ' + CONTRACT.slice(0, 10) + '...',        readme.includes(CONTRACT)],
     ['[GIT]   README chứa TEE Executor',                     readme.includes(TEE)],
     ['[GIT]   README chứa startAgent TX',                    readme.includes(START_TX.slice(0,20))],
-    ['[GIT]   README chứa Schedule ID #2729512',             readme.includes(SCHEDULE)],
+    ['[GIT]   README chứa Schedule ID #' + SCHEDULE,             readme.includes(SCHEDULE)],
     ['[GIT]   deployment.json đúng contract address',        deployment.contractAddress === CONTRACT],
     ['[GIT]   deployment.json đúng scheduleId',              deployment.scheduleId === SCHEDULE],
     ['[GIT]   deployment.json đúng executor (TEE)',          deployment.executor.toLowerCase() === TEE.toLowerCase()],
