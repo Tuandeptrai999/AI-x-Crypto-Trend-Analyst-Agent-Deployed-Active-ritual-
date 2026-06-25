@@ -82,7 +82,7 @@ Start the local development server:
 npm run dev
 ```
 
-Open `http://localhost:5173` (or `http://localhost:5174` if port 5173 is in use) to see your AI + Crypto Trend Analyst dashboard querying Ritual Chain RPC in real-time.
+Open `http://localhost:5174` to see your AI + Crypto Trend Analyst dashboard querying Ritual Chain RPC in real-time.
 
 ---
 
