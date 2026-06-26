@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import './App.css';
 
-const CONTRACT_ADDRESS = "0x02C96B18762BfA21AaB572D01cFD692608e93271";
+const CONTRACT_ADDRESS = "0x3BcDa307cFA37037AC3037c5f661909dBc9Bd9a4";
 const ABI = [
   "function owner() view returns (address)",
   "function walletBalance() view returns (uint256)",

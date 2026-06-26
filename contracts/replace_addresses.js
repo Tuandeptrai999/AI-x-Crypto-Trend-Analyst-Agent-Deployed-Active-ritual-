@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const NEW_ADDRESS = '0x02C96B18762BfA21AaB572D01cFD692608e93271';
+const NEW_ADDRESS = '0x3BcDa307cFA37037AC3037c5f661909dBc9Bd9a4';
 const OLD_ADDRESSES = [
-  '0x02C96B18762BfA21AaB572D01cFD692608e93271'
+  '0x3BcDa307cFA37037AC3037c5f661909dBc9Bd9a4'
 ];
 
 function processDir(dir) {
@@ -14,7 +14,7 @@ function processDir(dir) {
     const stat = fs.statSync(fullPath);
     if (stat.isDirectory()) {
       processDir(fullPath);
-    } else if (fullPath.endsWith('.js') || fullPath.endsWith('.json') || fullPath.endsWith('.md')) {
+    } else if (fullPath.endsWith('.js') || fullPath.endsWith('.json') || fullPath.endsWith('.md') || fullPath.endsWith('.tsx')) {
       let content = fs.readFileSync(fullPath, 'utf8');
       let changed = false;
       for (const old of OLD_ADDRESSES) {
@@ -31,4 +31,4 @@ function processDir(dir) {
   }
 }
 
-processDir(__dirname);
+processDir(path.resolve(__dirname, '..'));

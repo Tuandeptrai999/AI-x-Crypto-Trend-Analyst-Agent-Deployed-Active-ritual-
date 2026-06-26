@@ -24,7 +24,7 @@ async function main() {
     return;
   }
 
-  const CONTRACT = '0x02C96B18762BfA21AaB572D01cFD692608e93271';
+  const CONTRACT = '0x3BcDa307cFA37037AC3037c5f661909dBc9Bd9a4';
   const TX_HASH = '0x8b61f15bd857dec84e8d42a6e55f6c1386f557933b9eadd00bd0de33f87533fd';
 
   console.log(`Checking Contract Address: ${CONTRACT}`);

@@ -144,7 +144,7 @@ contract HomoMimic {
             frequency,
             500,          // ttl: must cover async settlement (~60–90 s ≈ ~200 blocks)
             maxFeePerGas,
-            0,            // maxPriorityFeePerGas
+            2_000_000_000, // maxPriorityFeePerGas (2 gwei)
             0,            // value per call
             address(this) // payer = this contract's RitualWallet balance
         );

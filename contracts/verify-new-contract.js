@@ -2,7 +2,7 @@ const { ethers } = require('ethers');
 
 async function main() {
   const provider = new ethers.JsonRpcProvider('https://rpc.ritualfoundation.org', { chainId: 1979, name: 'ritual' });
-  const CONTRACT = '0x02C96B18762BfA21AaB572D01cFD692608e93271';
+  const CONTRACT = '0x3BcDa307cFA37037AC3037c5f661909dBc9Bd9a4';
   
   console.log("Checking new contract address:", CONTRACT);
   

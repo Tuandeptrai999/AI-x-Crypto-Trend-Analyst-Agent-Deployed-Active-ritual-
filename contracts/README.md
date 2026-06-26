@@ -23,7 +23,7 @@ The agent is actively running on the Ritual Testnet:
 
 | Field | Value |
 |-------|-------|
-| **Contract Address** | `0x02C96B18762BfA21AaB572D01cFD692608e93271` |
+| **Contract Address** | `0x3BcDa307cFA37037AC3037c5f661909dBc9Bd9a4` |
 | **Owner Wallet** | `0xe63a4d9bB091659a47972980E91a087aF4430466` |
 | **TEE Executor** | `0x9dc11412391Dc3EDF59811FC9Ee7bEbFD41c8b4C` |
 | **Schedule ID** | `#2730709` |
@@ -32,7 +32,7 @@ The agent is actively running on the Ritual Testnet:
 | **Total Calls** | 5 iterations |
 | **Model** | `gemini-2.5-flash` |
 | **Network** | Ritual Testnet (Chain ID: 1979) |
-| **Explorer** | [View Contract](https://explorer.ritualfoundation.org/address/0x02C96B18762BfA21AaB572D01cFD692608e93271) |
+| **Explorer** | [View Contract](https://explorer.ritualfoundation.org/address/0x3BcDa307cFA37037AC3037c5f661909dBc9Bd9a4) |
 
 ## Compiler & Verification Info
 | Field | Value |

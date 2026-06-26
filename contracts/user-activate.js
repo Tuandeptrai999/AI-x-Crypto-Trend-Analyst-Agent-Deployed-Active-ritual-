@@ -55,10 +55,10 @@ async function main() {
   console.log(`Số dư ví Escrow hiện tại: ${ethers.formatEther(escrowBal)} RITUAL`);
 
   const feeData = await provider.getFeeData();
-  const MIN_ESCROW_BAL = ethers.parseEther('0.5'); // Cần tối thiểu 0.5 RITUAL trong escrow
+  const MIN_ESCROW_BAL = ethers.parseEther('0.1'); // Cần tối thiểu 0.1 RITUAL trong escrow
 
   if (escrowBal < MIN_ESCROW_BAL) {
-    const depositAmount = ethers.parseEther('0.5'); // Nạp thêm 0.5 RITUAL
+    const depositAmount = ethers.parseEther('0.1'); // Nạp thêm 0.1 RITUAL
     console.log(`\n1️⃣  Số dư Escrow thấp (${ethers.formatEther(escrowBal)} RITUAL). Đang nạp thêm 0.5 RITUAL...`);
     if (walletBal < depositAmount) {
       console.error(`❌ LỖI: Số dư ví không đủ 0.5 RITUAL để thực hiện nạp phí. Hãy faucet thêm RITUAL.`);

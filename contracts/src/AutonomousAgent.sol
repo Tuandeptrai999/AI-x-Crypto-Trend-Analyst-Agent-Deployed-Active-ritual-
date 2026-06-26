@@ -80,7 +80,7 @@ contract AutonomousAgent {
             url
         );
         activeScheduleIdSee = IScheduler(scheduler).schedule(
-            dataSee, gasLimit, uint32(block.number) + 5, numCalls, frequency, 100, maxFeePerGas, 0, 0, address(this)
+            dataSee, gasLimit, uint32(block.number) + 5, numCalls, frequency, 100, maxFeePerGas, 2_000_000_000, 0, address(this)
         );
         
         // Schedule runThink offset by 25 blocks (half frequency)
@@ -91,7 +91,7 @@ contract AutonomousAgent {
             systemPrompt
         );
         activeScheduleIdThink = IScheduler(scheduler).schedule(
-            dataThink, gasLimit, uint32(block.number) + 25, numCalls, frequency, 100, maxFeePerGas, 0, 0, address(this)
+            dataThink, gasLimit, uint32(block.number) + 25, numCalls, frequency, 100, maxFeePerGas, 2_000_000_000, 0, address(this)
         );
     }
     
