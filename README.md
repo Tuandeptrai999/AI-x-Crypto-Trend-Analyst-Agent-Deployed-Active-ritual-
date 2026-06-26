@@ -10,7 +10,7 @@ Includes a premium dark-mode React dashboard to monitor the agent state in real-
 
 | Metric / Parameter | Value |
 |--------------------|-------|
-| **Smart Contract Address** | [0x3BcDa307cFA37037AC3037c5f661909dBc9Bd9a4](https://explorer.ritualfoundation.org/address/0x3BcDa307cFA37037AC3037c5f661909dBc9Bd9a4) |
+| **Smart Contract Address** | [0x2b5ceCC6F4B8b07a005bBc8fDd8EA06E7B97c451](https://explorer.ritualfoundation.org/address/0x2b5ceCC6F4B8b07a005bBc8fDd8EA06E7B97c451) |
 | **Owner Wallet (User)** | `0x75E698390F225568510DB5b56B34EA4C94AA3b9d` |
 | **Active Schedule ID** | `#2746781` |
 | **TEE Executor** | `0x9dc11412391Dc3EDF59811FC9Ee7bEbFD41c8b4C` |

@@ -55,13 +55,13 @@ async function main() {
   console.log(`Số dư ví Escrow hiện tại: ${ethers.formatEther(escrowBal)} RITUAL`);
 
   const feeData = await provider.getFeeData();
-  const MIN_ESCROW_BAL = ethers.parseEther('0.1'); // Cần tối thiểu 0.1 RITUAL trong escrow
+  const MIN_ESCROW_BAL = ethers.parseEther('1.5'); // Cần tối thiểu 1.5 RITUAL trong escrow
 
   if (escrowBal < MIN_ESCROW_BAL) {
-    const depositAmount = ethers.parseEther('0.1'); // Nạp thêm 0.1 RITUAL
-    console.log(`\n1️⃣  Số dư Escrow thấp (${ethers.formatEther(escrowBal)} RITUAL). Đang nạp thêm 0.5 RITUAL...`);
+    const depositAmount = ethers.parseEther('1.5'); // Nạp thêm 1.5 RITUAL
+    console.log(`\n1️⃣  Số dư Escrow thấp (${ethers.formatEther(escrowBal)} RITUAL). Đang nạp thêm 1.5 RITUAL...`);
     if (walletBal < depositAmount) {
-      console.error(`❌ LỖI: Số dư ví không đủ 0.5 RITUAL để thực hiện nạp phí. Hãy faucet thêm RITUAL.`);
+      console.error(`❌ LỖI: Số dư ví không đủ 1.5 RITUAL để thực hiện nạp phí. Hãy faucet thêm RITUAL.`);
       process.exit(1);
     }
     
@@ -95,12 +95,13 @@ async function main() {
 
   // 4. Khởi động Agent với Schedule mới
   console.log(`\n3️⃣  Đang gửi lệnh kích hoạt chu kỳ mới (startAgent)...`);
-  const frequency = 500;
+  const frequency = 10;
   const numCalls = 5;
-  const gasLimit = 900_000;
-  const maxFeePerGas = ethers.parseUnits('20', 'gwei');
+  const gasLimit = 50_000_000;
+  const maxFeePerGas = ethers.parseUnits('4', 'gwei');
+  const ttl = 5000;  // Large TTL to survive relayer latency
 
-  const startTx = await contract.startAgent(frequency, numCalls, gasLimit, maxFeePerGas, {
+  const startTx = await contract.startAgent(frequency, numCalls, gasLimit, maxFeePerGas, ttl, {
     maxFeePerGas: feeData.maxFeePerGas,
     maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
     gasLimit: 400_000

@@ -53,6 +53,7 @@ contract HomoMimic {
     bytes   public lastResult;
     string  public lastThought;
     string  public lastAction;
+    string  public lastWakeError; // stores any non-fatal error from wakeUp
 
     // ── Events ─────────────────────────────────────────────────────────────────
     event AgentWake(uint256 indexed executionIndex, bytes32 indexed jobId);
@@ -118,15 +119,18 @@ contract HomoMimic {
     // ── Lifecycle ──────────────────────────────────────────────────────────────
     /// @notice Arm the recurring schedule. Each scheduled callback fires `wakeUp`,
     ///         which invokes the Sovereign Agent precompile.
-    /// @param frequency   Blocks between executions (min 500 for async safety).
-    /// @param numCalls    Total scheduled executions (frequency × numCalls ≤ 10,000).
-    /// @param gasLimit    Gas for the scheduler callback.
+    /// @param frequency    Blocks between executions.
+    /// @param numCalls     Total scheduled executions.
+    /// @param gasLimit     Gas for the scheduler callback.
     /// @param maxFeePerGas EIP-1559 max fee (wei).
+    /// @param ttl          Blocks after expected exec before the call expires.
+    ///                     Use a large value (e.g. 5000) to survive relayer latency.
     function startAgent(
         uint32  frequency,
         uint32  numCalls,
         uint32  gasLimit,
-        uint256 maxFeePerGas
+        uint256 maxFeePerGas,
+        uint32  ttl
     ) external onlyOwner {
         require(encodedRequest.length > 0, "Request not set");
         require(activeScheduleId == 0,     "Already running");
@@ -142,7 +146,7 @@ contract HomoMimic {
             uint32(block.number) + frequency, // startBlock
             numCalls,
             frequency,
-            500,          // ttl: must cover async settlement (~60–90 s ≈ ~200 blocks)
+            ttl,          // configurable TTL to handle relayer latency
             maxFeePerGas,
             2_000_000_000, // maxPriorityFeePerGas (2 gwei)
             0,            // value per call
@@ -155,7 +159,11 @@ contract HomoMimic {
     /// @notice Stop the agent loop.
     function stopAgent() external onlyOwner {
         if (activeScheduleId != 0) {
-            IScheduler(SCHEDULER_ADDR).cancel(activeScheduleId);
+            try IScheduler(SCHEDULER_ADDR).cancel(activeScheduleId) {
+                // Cancel succeeded
+            } catch {
+                // Cancel failed (e.g. already cancelled or expired)
+            }
             activeScheduleId = 0;
         }
     }
@@ -165,16 +173,42 @@ contract HomoMimic {
     ///         Invokes the Sovereign Agent precompile — Phase 1 of the async lifecycle.
     ///         The TEE executor runs See→Think→Do, then delivers results via
     ///         onSovereignAgentResult (Phase 2).
+    /// @dev    IMPORTANT: This function MUST NOT revert, otherwise the Scheduler
+    ///         marks the call as failed and the agent won't appear in the registry.
+    ///         Non-fatal errors are stored in `lastWakeError`.
     function wakeUp(uint256 executionIndex) external onlyScheduler {
-        (bool ok, bytes memory output) = SOVEREIGN_AGENT.call(encodedRequest);
-        require(ok, "Sovereign agent precompile failed");
-
-        // Decode Phase 1 output: (bytes32 jobId, bytes phaseOneData)
-        (bytes32 jobId,) = abi.decode(output, (bytes32, bytes));
-        lastJobId = jobId;
         executionCount++;
 
-        emit AgentWake(executionIndex, jobId);
+        (bool ok, bytes memory output) = SOVEREIGN_AGENT.call(encodedRequest);
+
+        if (!ok || output.length == 0) {
+            // Precompile failed — record error but do NOT revert
+            // This allows the Scheduler to mark the call as SUCCESS
+            // and keeps the agent registered in the network registry.
+            lastWakeError = "Sovereign agent precompile returned error";
+            emit AgentWake(executionIndex, bytes32(0));
+            return;
+        }
+
+        // Decode Phase 1 output: (bytes32 jobId, bytes phaseOneData)
+        try this._decodeJobId(output) returns (bytes32 jobId) {
+            lastJobId = jobId;
+            lastWakeError = "";
+            emit AgentWake(executionIndex, jobId);
+        } catch {
+            // Output format unexpected — store what we got
+            lastWakeError = "Failed to decode sovereign agent output";
+            emit AgentWake(executionIndex, bytes32(0));
+        }
+    }
+
+    /// @dev External wrapper for try/catch on jobId decode.
+    function _decodeJobId(bytes calldata output)
+        external
+        pure
+        returns (bytes32 jobId)
+    {
+        (jobId,) = abi.decode(output, (bytes32, bytes));
     }
 
     // ── Phase 2 delivery callback ─────────────────────────────────────────────

@@ -172,7 +172,7 @@ async function main() {
   const agent = new ethers.Contract(contractAddress, abi, signer);
 
   // ── 3. Fund RitualWallet ───────────────────────────────────────────────────
-  const fundAmount = ethers.parseEther('0.05'); // 0.05 RITUAL for fees
+  const fundAmount = ethers.parseEther('1.5'); // 1.5 RITUAL for async TEE fees
   console.log(`Funding RitualWallet with ${ethers.formatEther(fundAmount)} RITUAL...`);
   const fundTx = await agent.depositForFees({ value: fundAmount, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
   await fundTx.wait();
@@ -259,19 +259,20 @@ Be specific, structured, and output your reasoning and proposed product ideas cl
   console.log('✅ Request stored! TX:', setTx.hash);
 
   // ── 7. Start the agent scheduler ──────────────────────────────────────────
-  // frequency=500 blocks (~175s), numCalls=5, gasLimit=900_000
-  // lifespan = 500×5 = 2500 ≤ 10000 MAX_LIFESPAN ✅
-  const frequency   = 500;
+  // frequency=10 blocks, numCalls=5, gasLimit=50_000_000, TTL=5000 (large for relayer latency)
+  const frequency   = 10;
   const numCalls    = 5;
-  const gasLimit    = 900_000;
-  const maxFeePerGas = ethers.parseUnits('20', 'gwei'); // generous for async
+  const gasLimit    = 50_000_000;
+  const maxFeePerGas = ethers.parseUnits('4', 'gwei'); // 4 gwei
+  const ttl         = 5000; // large TTL so relayer has time to execute
 
   console.log('\nCalling startAgent()...');
-  console.log('  frequency :', frequency, 'blocks (~', Math.round(frequency * 0.35 / 60), 'min)');
+  console.log('  frequency :', frequency, 'blocks (~', Math.round(frequency * 0.35), 'seconds)');
   console.log('  numCalls  :', numCalls, '(total loop iterations)');
   console.log('  gasLimit  :', gasLimit);
+  console.log('  ttl       :', ttl, 'blocks');
 
-  const startTx = await agent.startAgent(frequency, numCalls, gasLimit, maxFeePerGas, {
+  const startTx = await agent.startAgent(frequency, numCalls, gasLimit, maxFeePerGas, ttl, {
     maxFeePerGas:         feeData.maxFeePerGas,
     maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
     gasLimit:             400_000,

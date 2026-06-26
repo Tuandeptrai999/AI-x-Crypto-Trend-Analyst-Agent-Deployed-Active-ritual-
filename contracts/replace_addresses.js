@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const NEW_ADDRESS = '0x3BcDa307cFA37037AC3037c5f661909dBc9Bd9a4';
+const NEW_ADDRESS = '0x2b5ceCC6F4B8b07a005bBc8fDd8EA06E7B97c451';
 const OLD_ADDRESSES = [
-  '0x3BcDa307cFA37037AC3037c5f661909dBc9Bd9a4'
+  '0x2b5ceCC6F4B8b07a005bBc8fDd8EA06E7B97c451'
 ];
 
 function processDir(dir) {

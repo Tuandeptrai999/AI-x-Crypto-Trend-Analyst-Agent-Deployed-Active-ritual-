@@ -36,7 +36,7 @@ async function main() {
   // Check current contract state
   console.log('\n=== KIỂM TRA CONTRACT HIỆN TẠI ===');
   const provider = new ethers.JsonRpcProvider('https://rpc.ritualfoundation.org', { chainId: 1979, name: 'ritual' });
-  const contract = new ethers.Contract('0x3BcDa307cFA37037AC3037c5f661909dBc9Bd9a4', [
+  const contract = new ethers.Contract('0x2b5ceCC6F4B8b07a005bBc8fDd8EA06E7B97c451', [
     "function activeScheduleId() view returns (uint256)",
     "function executionCount() view returns (uint256)",
     "function encodedRequest() view returns (bytes)"

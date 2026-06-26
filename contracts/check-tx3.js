@@ -36,7 +36,7 @@ async function main() {
         
         // Check which contract
         const OLD_CONTRACT = '0x9581a0f1710E42643393e9f1cDd9709447c21656';
-        const NEW_CONTRACT = '0x3BcDa307cFA37037AC3037c5f661909dBc9Bd9a4';
+        const NEW_CONTRACT = '0x2b5ceCC6F4B8b07a005bBc8fDd8EA06E7B97c451';
         const OWNER = '0xe63a4d9bB091659a47972980E91a087aF4430466';
         
         if (tx.to?.toLowerCase() === OLD_CONTRACT.toLowerCase()) {
